@@ -190,23 +190,30 @@ class OneKomma5LiveCoordinator(OneKomma5BaseCoordinator[LiveData]):
 
         # Check for 1K5 site asset EVs
         try:
-            client = getattr(self._system, "client", None)
-            base = getattr(client, "HEARTBEAT_API", "https://heartbeat.1komma5grad.com")
+            client = getattr(self._system, "_client", getattr(self._system, "client", None))
+            base = (
+                getattr(client, "HEARTBEAT_API", "https://heartbeat.1komma5grad.com")
+                if client
+                else "https://heartbeat.1komma5grad.com"
+            )
             if client and hasattr(client, "_request"):
                 site_evs = client._request(
                     "GET",
                     f"{base}/api/v1/sites/{self._system.id()}/assets/evs",
                     error_label="Failed to fetch site EVs",
                 )
-            else:
+            elif client and hasattr(client, "get_token"):
                 import requests
-                token = client.get_token() if hasattr(client, "get_token") else ""
+
+                token = client.get_token()
                 res = requests.get(
                     f"{base}/api/v1/sites/{self._system.id()}/assets/evs",
                     headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
                     timeout=15,
                 )
                 site_evs = res.json() if res.status_code == 200 else []
+            else:
+                site_evs = []
 
             if isinstance(site_evs, list):
                 from .ev_adapter import OneKomma5EV
@@ -216,7 +223,7 @@ class OneKomma5LiveCoordinator(OneKomma5BaseCoordinator[LiveData]):
                     if ev_raw.get("id") not in known_ids:
                         ev_chargers.append(OneKomma5EV(ev_raw, self._system, is_site_asset=True))
         except Exception as err:
-            _LOGGER.debug("Site assets EV fetch failed or not applicable: %s", err)
+            _LOGGER.warning("Site assets EV fetch failed or not applicable: %s", err)
 
         try:
             ems_settings = self._system.get_ems_settings()

@@ -187,6 +187,7 @@ class OneKomma5EVEntity(CoordinatorEntity[OneKomma5LiveCoordinator]):
         self._stable_object_id = f"{slugify(system_name)}_{slugify(self._ev_id)}_{unique_id_suffix}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"{system_id}_{self._ev_id}")},
+            name=ev.name() or "Elektrofahrzeug",
             translation_key="vehicle",
             manufacturer=ev.manufacturer(),
             model=ev.model(),

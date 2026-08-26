@@ -120,9 +120,16 @@ class OneKomma5EV:
             return float(manual_soc * 100.0)
         return None
 
+    def _get_client(self) -> Any:
+        return getattr(self._system, "_client", getattr(self._system, "client", None))
+
     def _url(self) -> str:
-        api_base = getattr(self._system, "client", None)
-        base = getattr(api_base, "HEARTBEAT_API", "https://heartbeat.1komma5grad.com")
+        client = self._get_client()
+        base = (
+            getattr(client, "HEARTBEAT_API", "https://heartbeat.1komma5grad.com")
+            if client
+            else "https://heartbeat.1komma5grad.com"
+        )
         if self._is_site_asset:
             return f"{base}/api/v1/sites/{self._system.id()}/assets/evs/{self.id()}"
         return f"{base}/api/v1/systems/{self._system.id()}/devices/evs/{self.id()}"
@@ -133,7 +140,7 @@ class OneKomma5EV:
         if self.charging_mode_raw() == mode_str:
             return
 
-        client = getattr(self._system, "client", None)
+        client = self._get_client()
         if self._is_site_asset:
             payload = {"chargingMode": mode_str}
         else:
@@ -141,10 +148,16 @@ class OneKomma5EV:
 
         if client and hasattr(client, "_request"):
             client._request("PATCH", self._url(), json=payload, error_label="Failed to set charging mode")
-        else:
+        elif client and hasattr(client, "get_token"):
             import requests
-            token = client.get_token() if hasattr(client, "get_token") else ""
-            res = requests.patch(self._url(), json=payload, headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"}, timeout=30)
+
+            token = client.get_token()
+            res = requests.patch(
+                self._url(),
+                json=payload,
+                headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+                timeout=30,
+            )
             if res.status_code != 200:
                 raise Exception(f"Failed to set charging mode: {res.text}")
 
@@ -155,7 +168,7 @@ class OneKomma5EV:
 
     def set_current_soc(self, soc: float) -> None:
         soc_decimal = float(soc / 100.0) if soc > 0 else 0.0
-        client = getattr(self._system, "client", None)
+        client = self._get_client()
         if self._is_site_asset:
             payload = {"manualSoc": soc_decimal}
         else:
@@ -163,16 +176,22 @@ class OneKomma5EV:
 
         if client and hasattr(client, "_request"):
             client._request("PATCH", self._url(), json=payload, error_label="Failed to set state of charge")
-        else:
+        elif client and hasattr(client, "get_token"):
             import requests
-            token = client.get_token() if hasattr(client, "get_token") else ""
-            requests.patch(self._url(), json=payload, headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"}, timeout=30)
+
+            token = client.get_token()
+            requests.patch(
+                self._url(),
+                json=payload,
+                headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+                timeout=30,
+            )
 
         self._data["manualSoc"] = soc_decimal
 
     def set_target_soc(self, soc: float) -> None:
         soc_decimal = float(soc / 100.0) if soc > 0 else 0.0
-        client = getattr(self._system, "client", None)
+        client = self._get_client()
         if self._is_site_asset:
             payload = {"targetSoc": soc_decimal}
         else:
@@ -180,10 +199,16 @@ class OneKomma5EV:
 
         if client and hasattr(client, "_request"):
             client._request("PATCH", self._url(), json=payload, error_label="Failed to set target state of charge")
-        else:
+        elif client and hasattr(client, "get_token"):
             import requests
-            token = client.get_token() if hasattr(client, "get_token") else ""
-            requests.patch(self._url(), json=payload, headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"}, timeout=30)
+
+            token = client.get_token()
+            requests.patch(
+                self._url(),
+                json=payload,
+                headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+                timeout=30,
+            )
 
         if self._is_site_asset:
             self._data["targetSoc"] = soc_decimal
@@ -191,7 +216,7 @@ class OneKomma5EV:
             self._data.setdefault("chargeSettings", {})["targetSoc"] = soc_decimal
 
     def set_primary_departure_time(self, time_str: str) -> None:
-        client = getattr(self._system, "client", None)
+        client = self._get_client()
         if self._is_site_asset:
             payload = {"departureTime": time_str}
         else:
@@ -199,10 +224,16 @@ class OneKomma5EV:
 
         if client and hasattr(client, "_request"):
             client._request("PATCH", self._url(), json=payload, error_label="Failed to set primary departure time")
-        else:
+        elif client and hasattr(client, "get_token"):
             import requests
-            token = client.get_token() if hasattr(client, "get_token") else ""
-            requests.patch(self._url(), json=payload, headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"}, timeout=30)
+
+            token = client.get_token()
+            requests.patch(
+                self._url(),
+                json=payload,
+                headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+                timeout=30,
+            )
 
         if self._is_site_asset:
             self._data["departureTime"] = time_str
