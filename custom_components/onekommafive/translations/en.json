@@ -384,6 +384,7 @@
         "name": "Charging mode",
         "state": {
           "smart_charge": "Smart Charge",
+          "program_charge": "Program Charge",
           "quick_charge": "Quick Charge",
           "solar_charge": "Solar Charge"
         }
@@ -400,6 +401,17 @@
     "time": {
       "ev_departure_time": {
         "name": "Departure time"
+      }
+    },
+    "button": {
+      "ev_start_quick_charge": {
+        "name": "Start Quick Charge"
+      },
+      "ev_start_solar_charge": {
+        "name": "Start Solar Charge"
+      },
+      "ev_start_smart_charge": {
+        "name": "Start Smart Charge"
       }
     }
   },

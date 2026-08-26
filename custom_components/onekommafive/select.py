@@ -16,7 +16,7 @@ from .entity import OneKomma5EVEntity, apply_stable_entity_ids
 _LOGGER = logging.getLogger(__name__)
 
 # HA translation keys must be lowercase; the API uses UPPER_CASE enum values.
-CHARGING_MODE_OPTIONS = ["smart_charge", "quick_charge", "solar_charge"]
+CHARGING_MODE_OPTIONS = ["smart_charge", "program_charge", "quick_charge", "solar_charge"]
 
 
 async def async_setup_entry(
@@ -65,16 +65,15 @@ class OneKomma5ChargingModeSelect(OneKomma5EVEntity, SelectEntity):
         ev = self._get_ev()
         if ev is None:
             return None
-        return ev.charging_mode().value.lower()
+        mode = ev.charging_mode()
+        val = mode.value if hasattr(mode, "value") else str(mode)
+        return val.lower()
 
     async def async_select_option(self, option: str) -> None:
         """Change the charging mode."""
-        from onekommafive.models import ChargingMode
-
-        mode = ChargingMode(option.upper())
         ev = self._get_ev()
         if ev is None:
             _LOGGER.warning("EV charger %s not found, cannot set charging mode", self._ev_id)
             return
-        await self.hass.async_add_executor_job(ev.set_charging_mode, mode)
+        await self.hass.async_add_executor_job(ev.set_charging_mode, option.upper())
         await self.coordinator.async_request_refresh()

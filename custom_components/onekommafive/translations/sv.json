@@ -384,6 +384,7 @@
         "name": "Laddningsläge",
         "state": {
           "smart_charge": "Smart laddning",
+          "program_charge": "Programladdning",
           "quick_charge": "Snabbladdning",
           "solar_charge": "Sol-laddning"
         }
@@ -400,6 +401,17 @@
     "time": {
       "ev_departure_time": {
         "name": "Avresetid"
+      }
+    },
+    "button": {
+      "ev_start_quick_charge": {
+        "name": "Starta snabbladdning"
+      },
+      "ev_start_solar_charge": {
+        "name": "Aktivera sol-laddning"
+      },
+      "ev_start_smart_charge": {
+        "name": "Aktivera smart laddning"
       }
     }
   },

@@ -384,6 +384,7 @@
         "name": "Lademodus",
         "state": {
           "smart_charge": "Smart Charge",
+          "program_charge": "Programmladen",
           "quick_charge": "Schnellladen",
           "solar_charge": "Solar Charge"
         }
@@ -400,6 +401,17 @@
     "time": {
       "ev_departure_time": {
         "name": "Abfahrtzeit"
+      }
+    },
+    "button": {
+      "ev_start_quick_charge": {
+        "name": "Schnellladen starten"
+      },
+      "ev_start_solar_charge": {
+        "name": "Solar Charge aktivieren"
+      },
+      "ev_start_smart_charge": {
+        "name": "Smart Charge aktivieren"
       }
     }
   },

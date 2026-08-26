@@ -322,7 +322,11 @@ EV_SENSORS: tuple[OneKomma5EVSensorDescription, ...] = (
     OneKomma5EVSensorDescription(
         key="ev_charging_mode",
         translation_key="ev_charging_mode",
-        value_fn=lambda ev: ev.charging_mode().value,
+        value_fn=lambda ev: (
+            ev.charging_mode().value
+            if hasattr(ev.charging_mode(), "value")
+            else str(ev.charging_mode())
+        ),
     ),
     # Static vehicle spec — nominal battery capacity (Wh → kWh). No state_class:
     # a near-constant value would only draw a flat line in Long-Term Statistics.

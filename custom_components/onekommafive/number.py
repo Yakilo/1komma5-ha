@@ -36,10 +36,12 @@ class OneKomma5EVNumberDescription(NumberEntityDescription):
 
 
 def _ev_smart_charge_available(ev: Any) -> bool:
-    """True only when the EV charger is in SMART_CHARGE mode."""
-    from onekommafive.models import ChargingMode
-
-    return ev.charging_mode() == ChargingMode.SMART_CHARGE
+    """True when the EV charger is in SMART_CHARGE or PROGRAM_CHARGE mode."""
+    mode_raw = (
+        getattr(ev, "charging_mode_raw", lambda: "")()
+        or (ev.charging_mode().value if hasattr(ev.charging_mode(), "value") else str(ev.charging_mode()))
+    )
+    return mode_raw.upper() in ("SMART_CHARGE", "PROGRAM_CHARGE") or ev.current_soc() is not None
 
 
 EV_NUMBER_DEFAULTS: dict[str, Any] = {

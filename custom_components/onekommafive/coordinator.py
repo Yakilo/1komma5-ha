@@ -183,7 +183,41 @@ class OneKomma5LiveCoordinator(OneKomma5BaseCoordinator[LiveData]):
     def _fetch(self) -> LiveData:
         """Fetch all live data synchronously."""
         live_overview = self._system.get_live_overview()
-        ev_chargers = self._system.get_ev_chargers()
+        try:
+            ev_chargers = list(self._system.get_ev_chargers() or [])
+        except Exception:
+            ev_chargers = []
+
+        # Check for 1K5 site asset EVs
+        try:
+            client = getattr(self._system, "client", None)
+            base = getattr(client, "HEARTBEAT_API", "https://heartbeat.1komma5grad.com")
+            if client and hasattr(client, "_request"):
+                site_evs = client._request(
+                    "GET",
+                    f"{base}/api/v1/sites/{self._system.id()}/assets/evs",
+                    error_label="Failed to fetch site EVs",
+                )
+            else:
+                import requests
+                token = client.get_token() if hasattr(client, "get_token") else ""
+                res = requests.get(
+                    f"{base}/api/v1/sites/{self._system.id()}/assets/evs",
+                    headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+                    timeout=15,
+                )
+                site_evs = res.json() if res.status_code == 200 else []
+
+            if isinstance(site_evs, list):
+                from .ev_adapter import OneKomma5EV
+
+                known_ids = {getattr(ev, "id", lambda: "")() for ev in ev_chargers}
+                for ev_raw in site_evs:
+                    if ev_raw.get("id") not in known_ids:
+                        ev_chargers.append(OneKomma5EV(ev_raw, self._system, is_site_asset=True))
+        except Exception as err:
+            _LOGGER.debug("Site assets EV fetch failed or not applicable: %s", err)
+
         try:
             ems_settings = self._system.get_ems_settings()
         except Exception:

@@ -384,6 +384,7 @@
         "name": "Laadmodus",
         "state": {
           "smart_charge": "Slim laden",
+          "program_charge": "Programmaladen",
           "quick_charge": "Snel laden",
           "solar_charge": "Zonne-laden"
         }
@@ -400,6 +401,17 @@
     "time": {
       "ev_departure_time": {
         "name": "Vertrektijd"
+      }
+    },
+    "button": {
+      "ev_start_quick_charge": {
+        "name": "Snel laden starten"
+      },
+      "ev_start_solar_charge": {
+        "name": "Zonne-laden activeren"
+      },
+      "ev_start_smart_charge": {
+        "name": "Slim laden activeren"
       }
     }
   },

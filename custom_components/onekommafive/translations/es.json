@@ -384,6 +384,7 @@
         "name": "Modo de carga",
         "state": {
           "smart_charge": "Carga inteligente",
+          "program_charge": "Carga programada",
           "quick_charge": "Carga rápida",
           "solar_charge": "Carga solar"
         }
@@ -400,6 +401,17 @@
     "time": {
       "ev_departure_time": {
         "name": "Hora de salida"
+      }
+    },
+    "button": {
+      "ev_start_quick_charge": {
+        "name": "Iniciar carga rápida"
+      },
+      "ev_start_solar_charge": {
+        "name": "Activar carga solar"
+      },
+      "ev_start_smart_charge": {
+        "name": "Activar carga inteligente"
       }
     }
   },

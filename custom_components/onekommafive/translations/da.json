@@ -384,6 +384,7 @@
         "name": "Ladetilstand",
         "state": {
           "smart_charge": "Smart opladning",
+          "program_charge": "Programopladning",
           "quick_charge": "Hurtig opladning",
           "solar_charge": "Solcelle-opladning"
         }
@@ -400,6 +401,17 @@
     "time": {
       "ev_departure_time": {
         "name": "Afgangstid"
+      }
+    },
+    "button": {
+      "ev_start_quick_charge": {
+        "name": "Start hurtig opladning"
+      },
+      "ev_start_solar_charge": {
+        "name": "Aktivér solcelle-opladning"
+      },
+      "ev_start_smart_charge": {
+        "name": "Aktivér smart opladning"
       }
     }
   },

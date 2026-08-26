@@ -384,6 +384,7 @@
         "name": "Lataustila",
         "state": {
           "smart_charge": "Älylataus",
+          "program_charge": "Ohjelmoitu lataus",
           "quick_charge": "Pikalataus",
           "solar_charge": "Aurinkolataus"
         }
@@ -400,6 +401,17 @@
     "time": {
       "ev_departure_time": {
         "name": "Lähtöaika"
+      }
+    },
+    "button": {
+      "ev_start_quick_charge": {
+        "name": "Käynnistä pikalataus"
+      },
+      "ev_start_solar_charge": {
+        "name": "Aktivoi aurinkolataus"
+      },
+      "ev_start_smart_charge": {
+        "name": "Aktivoi älylataus"
       }
     }
   },
