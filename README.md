@@ -1,24 +1,23 @@
-# 1KOMMA5° Home Assistant Integration
+# 1KOMMA5° Home Assistant Integration (Custom Fork with EV Support)
 
-![1KOMMA5° logo](https://raw.githubusercontent.com/mrebbert/1komma5-ha/main/custom_components/onekommafive/brand/icon.png)
+![1KOMMA5° logo](https://raw.githubusercontent.com/Yakilo/1komma5-ha/main/custom_components/onekommafive/brand/icon.png)
 
-[![GitHub Release](https://img.shields.io/github/v/release/mrebbert/1komma5-ha?style=for-the-badge)](https://github.com/mrebbert/1komma5-ha/releases)
-[![HACS](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://hacs.xyz)
-[![Validate](https://img.shields.io/github/actions/workflow/status/mrebbert/1komma5-ha/validate.yml?label=Validate&style=for-the-badge)](https://github.com/mrebbert/1komma5-ha/actions/workflows/validate.yml)
-[![Tests](https://img.shields.io/github/actions/workflow/status/mrebbert/1komma5-ha/test.yml?label=Tests&style=for-the-badge)](https://github.com/mrebbert/1komma5-ha/actions/workflows/test.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://github.com/mrebbert/1komma5-ha/blob/main/LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/Yakilo/1komma5-ha?style=for-the-badge)](https://github.com/Yakilo/1komma5-ha/releases)
+[![HACS](https://img.shields.io/badge/HACS-Custom_Repository-orange.svg?style=for-the-badge)](https://hacs.xyz)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://github.com/Yakilo/1komma5-ha/blob/main/LICENSE)
 
-Bring your **1KOMMA5° Heartbeat** solar + battery + heat pump + EV wallbox platform into Home Assistant. Dynamic electricity prices (dynamischer Stromtarif), 30-hour price forecast, AI optimization decisions, per-device cost allocation, cheapest-charging-window scheduling, weather forecast, and cloud push notifications — all as native HA sensors, services and bus events. Fully compatible with the **Home Assistant Energy Dashboard**.
+Bring your **1KOMMA5° Heartbeat** solar + battery + heat pump + EV wallbox platform into Home Assistant. Dynamic electricity prices (dynamischer Stromtarif), 30-hour price forecast, AI optimization decisions, per-device cost allocation, cheapest-charging-window scheduling, weather forecast, cloud push notifications, and **extended EV charging & mode control** — all as native HA sensors, select entities, buttons, services and bus events. Fully compatible with the **Home Assistant Energy Dashboard**.
 
 ## Highlights
 
 - ⚡ **60+ sensors** across 7 coordinators covering power, energy, cost, dynamic prices, AI decisions, weather and system health
+- 🚗 **Full EV & Wallbox Support** — works with classic GridX gateways and modern 1K5 cloud site assets (e.g. Enphase IQ EV Charger)
+- 🎛️ **Charging Mode Select & Action Buttons** — `PROGRAM_CHARGE` (Programmladen), `QUICK_CHARGE` (Schnellladen), `SOLAR_CHARGE` (Solar Charge), and direct start buttons
 - 💶 **Dynamic tariff support** with 30-hour price forecast, cheapest-window sensors, and per-consumer cost allocation
 - 🤖 **AI optimization events** — react to Heartbeat's grid-charge / heat-pump-recommend decisions in real time
-- 🔔 **Cloud notification bridge** (v0.1.52) — drive automations from the same push notifications the 1KOMMA5° mobile app receives
+- 🔔 **Cloud notification bridge** — drive automations from the same push notifications the 1KOMMA5° mobile app receives
 - 🌍 **Seven locales** (DE, NL, FI, ES, DK, SE, AU) with per-market currency (EUR, DKK, SEK, AUD)
 - 🏠 **Energy Dashboard-ready** out of the box; no template sensors, no manual wiring
-- 📥 **Available in the HACS Default Store** — no custom repository setup needed
 
 ## Table of Contents
 
@@ -47,25 +46,27 @@ Bring your **1KOMMA5° Heartbeat** solar + battery + heat pump + EV wallbox plat
 
 ## Quick start
 
-### 1. Install via HACS
+### 1. Installation via HACS (Custom Repository)
 
-This integration is in the **HACS Default Store** — no custom repository setup required.
+Da dieses Repository eine angepasste Version mit erweiterter Wallbox- und Fahrzeugsteuerung ist, wird es als **Benutzerdefiniertes Repository** (Custom Repository) in HACS hinzugefügt:
 
-1. Open **HACS** in Home Assistant
-2. Search for **1KOMMA5°**
-3. Click **Download**
-4. Restart Home Assistant
-
-One-click open:
-
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=mrebbert&repository=1komma5-ha&category=integration)
+1. Öffne **HACS** in Home Assistant.
+2. Klicke oben rechts auf das Drei-Punkte-Menü (**⋮**) und wähle **Benutzerdefinierte Repositories** (*Custom repositories*).
+3. Füge folgende Repository-URL ein:
+   ```text
+   https://github.com/Yakilo/1komma5-ha
+   ```
+4. Wähle als Typ **Integration**.
+5. Klicke auf **Hinzufügen** (*Add*).
+6. Suche anschließend in HACS nach **1KOMMA5°** und klicke auf **Herunterladen** (*Download*).
+7. Starte Home Assistant neu.
 
 <details>
-<summary>Manual installation (without HACS)</summary>
+<summary>Alternative: Manuelle Installation (ohne HACS)</summary>
 
-1. Download the [latest release](https://github.com/mrebbert/1komma5-ha/releases/latest) (`onekommafive.zip`)
-2. Extract and copy the `onekommafive/` folder to `<config>/custom_components/`
-3. Restart Home Assistant
+1. Lade das Repository als ZIP herunter.
+2. Kopiere den Ordner `custom_components/onekommafive/` in dein Home Assistant Verzeichnis unter `<config>/custom_components/onekommafive/`.
+3. Starte Home Assistant neu.
 </details>
 
 ### 2. Add the integration
@@ -291,14 +292,17 @@ One set of entities per connected EV charger.
 
 **Sensors:** `ev_target_soc` (%), `ev_charging_mode` (mode enum), `ev_battery_capacity` (kWh), `ev_scheduled_departure_soc` (%)
 
-**Controls:**
+**Controls & Buttons:**
 
 | Entity | Type | Description |
 |--------|------|-------------|
-| Charging Mode | Select | `SMART_CHARGE` / `QUICK_CHARGE` / `SOLAR_CHARGE` |
-| Target SoC | Number (0–100 %) | Desired battery target |
-| Departure Time | Time | Daily primary departure |
-| Vehicle SoC (Manual) | Number (0–100 %) | Manual current-SoC report (SMART_CHARGE only) |
+| Charging Mode | Select | `PROGRAM_CHARGE` / `SMART_CHARGE` / `QUICK_CHARGE` / `SOLAR_CHARGE` |
+| Start Quick Charge | Button | Schaltet sofort auf Schnellladen (`QUICK_CHARGE`) um |
+| Start Solar Charge | Button | Aktiviert reines PV-Überschussladen (`SOLAR_CHARGE`) |
+| Start Smart Charge | Button | Aktiviert intelligentes/geplantes Laden (`PROGRAM_CHARGE` / `SMART_CHARGE`) |
+| Target SoC | Number (0–100 %) | Gewünschter Ziel-Akkustand |
+| Departure Time | Time | Geplante tägliche Abfahrtszeit |
+| Vehicle SoC (Manual) | Number (0–100 %) | Manueller Fahrzeug-Akkustand |
 
 <details>
 <summary>Automation: sync manual SoC from your car integration</summary>
